@@ -430,36 +430,36 @@ void Excep_TPU5_TGI5A(void);
 void Excep_TPU5_TGI5B(void);
 
 // TPU6 TGI6A
-#pragma interrupt (Excep_TPU6_TGI6A(vect=142))
-void Excep_TPU6_TGI6A(void);
+// #pragma interrupt (Excep_TPU6_TGI6A(vect=142))
+// void Excep_TPU6_TGI6A(void);
 
 // MTU0 TGIA0
-//#pragma interrupt (Excep_MTU0_TGIA0(vect=142))
-//void Excep_MTU0_TGIA0(void);
+#pragma interrupt (Excep_MTU0_TGIA0(vect=142))
+void Excep_MTU0_TGIA0(void);
 
 // TPU6 TGI6B
-#pragma interrupt (Excep_TPU6_TGI6B(vect=143))
-void Excep_TPU6_TGI6B(void);
+// #pragma interrupt (Excep_TPU6_TGI6B(vect=143))
+// void Excep_TPU6_TGI6B(void);
 
 // MTU0 TGIB0
-//#pragma interrupt (Excep_MTU0_TGIB0(vect=143))
-//void Excep_MTU0_TGIB0(void);
+#pragma interrupt (Excep_MTU0_TGIB0(vect=143))
+void Excep_MTU0_TGIB0(void);
 
 // TPU6 TGI6C
-#pragma interrupt (Excep_TPU6_TGI6C(vect=144))
-void Excep_TPU6_TGI6C(void);
+// #pragma interrupt (Excep_TPU6_TGI6C(vect=144))
+// void Excep_TPU6_TGI6C(void);
 
 // MTU0 TGIC0
-//#pragma interrupt (Excep_MTU0_TGIC0(vect=144))
-//void Excep_MTU0_TGIC0(void);
+#pragma interrupt (Excep_MTU0_TGIC0(vect=144))
+void Excep_MTU0_TGIC0(void);
 
 // TPU6 TGI6D
-#pragma interrupt (Excep_TPU6_TGI6D(vect=145))
-void Excep_TPU6_TGI6D(void);
+// #pragma interrupt (Excep_TPU6_TGI6D(vect=145))
+// void Excep_TPU6_TGI6D(void);
 
 // MTU0 TGID0
-//#pragma interrupt (Excep_MTU0_TGID0(vect=145))
-//void Excep_MTU0_TGID0(void);
+#pragma interrupt (Excep_MTU0_TGID0(vect=145))
+void Excep_MTU0_TGID0(void);
 
 // MTU0 TGIE0
 #pragma interrupt (Excep_MTU0_TGIE0(vect=146))
