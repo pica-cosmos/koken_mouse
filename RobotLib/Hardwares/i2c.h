@@ -50,8 +50,8 @@ SW4 : BIT4
 ************************************************/
 
 /*I2C送受信用の関数 割込みは禁止*/
-/*----------------------------- */
-void I2C_init(void);
+/*------------------------------------------------*/
+void init_I2C(void);
 void I2C_START(void);
 void I2C_RESTART(void);
 void I2C_STOP(void);
@@ -59,9 +59,9 @@ void I2C_PUT(unsigned char aaa);
 
 
 /*IOエキスパンダ用の関数*/
-/*---------------------*/
+/*------------------------------------------------*/
 //IOエキスパンダの初期化
-void IOex_init(void);
+void init_IOex(void);
 
 //スイッチの値を16進数で受信し、値を返す（manual p:1525)
 unsigned char IOex_SWITCH(void);

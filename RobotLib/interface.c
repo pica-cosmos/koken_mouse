@@ -6,7 +6,6 @@
 #include "Parameters/static_parameters.h"
 #include "Parameters/adjust_parameters.h"
 #include "Definations/system_definations.h"
-#include "Definations/macro.h"
 
 extern void wait_ms(int miribyou);
 
@@ -36,10 +35,10 @@ void buzzer_on(int duty_percent, int circuit_hz){
 	int circuit,duty;
 
 	//上限、下限を設定
-	if (duty_percent <= 0)
-		duty_percent = 1;
-	if (duty_percent >= 100)
-		duty_percent = 99;
+	if (duty_percent <= DUTY_VOLUME_MIN)
+		duty_percent = DUTY_VOLUME_MIN;
+	if (duty_percent >= DUTY_VOLUME_MAX)
+		duty_percent = DUTY_VOLUME_MAX;
 	if (circuit_hz > FREQUENCY_MAX)
 		circuit_hz = FREQUENCY_MAX;
 	if (circuit_hz < FREQUENCY_MIN)
@@ -84,7 +83,7 @@ void mode_change( char* mode, char mode_min, char mode_max){
 			*mode= *mode + 1;
 		}
 		BEEP(50,1500,1);
-		for(i = 0; i < 100*1000*50; i++);
+		wait_ms(100);
 	}
 
 	if(speed_r < -0.1){
@@ -93,8 +92,8 @@ void mode_change( char* mode, char mode_min, char mode_max){
 		}else{
 			*mode = *mode -1;
 		}
-		BEEP(50,500,1);
-		for(i = 0; i < 100*1000*50; i++);
+		BEEP(50,300,1);
+		wait_ms(100);
 	}
 	LED(*mode);
 	wait_ms(50);	//誤動作防止
@@ -120,7 +119,7 @@ void adjust_mode_select(void)
 				*****************************************/
 				//パラメーターをUARTで表示
 				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
-					BEEP(50,440,1);
+					MOTOR_EN_OUT = 1;
 					//壁制御を有効にする
 					con_wall.enable = true;
 					while(1){
@@ -154,9 +153,10 @@ void adjust_mode_select(void)
 						SCI_printf("\x1b[0;0H");			//カーソルを0,0に移動
 						
 						if(SWITCH_2(push_switch) == 1){
-							BEEP(50,440,1);
+							BEEP(50,1000,3);
 							break;	
 						}
+						wait_ms(300);
 					}
 				}				
 				break;
@@ -171,13 +171,12 @@ void adjust_mode_select(void)
 				*****************************************/	
 				//一区画分前進
 				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
-					BEEP(50,440,1);
+					BEEP(50,500,1);
 					gyro_get_ref();
-					BEEP(50,440,1);
+					BEEP(50,500,1);
 					len_mouse = 0;
 					straight(SECTION,SEARCH_ACCEL,SEARCH_SPEED,0);
 					MOTOR_EN_OUT = 0;
-					BEEP(50,440,1);
 				}
 				
 				break;
@@ -192,12 +191,11 @@ void adjust_mode_select(void)
 				*****************************************/
 				//90度右に旋回
 				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
-					BEEP(50,440,1);
+					BEEP(50,500,1);
 					gyro_get_ref();
-					BEEP(50,440,1);
+					BEEP(50,500,1);
 					turn(90,TURN_ACCEL,TURN_SPEED,RIGHT);
 					MOTOR_EN_OUT = 0;
-					BEEP(50,440,1);
 				}
 				
 				break;
@@ -234,13 +232,7 @@ void adjust_mode_select(void)
 				*	O	O	O	X	*
 				*					*
 				*****************************************/
-				
-				//センサーの前に手をかざしてスタート
-				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
-					BEEP(50,440,1);
-				}
 				break;
-
 			//mode0~7以外の場合。何もしない。
 			default:
 				break;
@@ -254,7 +246,7 @@ void adjust_mode_select(void)
 		MOTOR_EN_OUT = 0;
 		
 		if(SWITCH_3(push_switch) == 1){
-			BEEP(50,100,5);
+			BEEP(100,1000,5);
 			break;
 		}
 	}

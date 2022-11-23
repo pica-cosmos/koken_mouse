@@ -6,6 +6,7 @@
 ICCR1 : i2cバスコントロールレジスタ(p.1487)
 --IICRST : 1でi2c内部リセット
 --ICE : i2c許可(1),i2c禁止(0)
+--☆init_I2C()において、IICRSTの位置をずらすとIOex_switch()が正常に動作しない。理由は不明
 
 ICCR2 : I2Cバスコントロールレジスタ
 --i2cコンディション書き込み用
@@ -45,7 +46,7 @@ ICBRL : 転送速度=1/{[ICBRH+1)+(ICBRL+1)]/IICφ}	400kbps -> F0, 100kbps -> FD
 ICBRH : IICφ=PCLKx10^6×分周比 / Tr=0の場合は400kHz	400kbps -> E7, 100kbps -> F8
 
 ※今回の設定
-PCLK~=50なので、表36-5,400kbpsの欄を参考にする
+PCLK=48なので、表36-5,400kbpsの欄を参考にする
 ----------------*/
 
 unsigned char IOex_SWITCH(void)
@@ -83,7 +84,6 @@ unsigned char IOex_SWITCH(void)
 		;
 	RIIC2.ICSR2.BIT.NACKF = 0;	//フラグを初期化
 	RIIC2.ICSR2.BIT.STOP = 0;
-
 	return who;
 }
 
@@ -97,33 +97,32 @@ void IOex_LED(unsigned char led_num)
 	I2C_STOP();
 }
 
-void IOex_init(void)
-{
-	I2C_START();		  // Startbit発生
-	I2C_PUT((0x18 << 1)); //アドレス write
-	I2C_PUT(0x03);		  // PWR_MGMT_2 init
-	I2C_PUT(0xF0);		  // sleep解除
+
+void init_IOex(void){
+//ポーリングによる設定
+//*
+	I2C_START();//Startbit発生
+	I2C_PUT((0x18<<1));//アドレス write
+	I2C_PUT(0x03);//PWR_MGMT_2
+	I2C_PUT(0xF0);//sleep解除
 	I2C_STOP();
 }
 
-void I2C_init(void)
+void init_I2C(void)
 {
-
 	// I2Cのイニシャライズ
 	PORT1.PCR.BIT.B6 = 0; //入力プルアップ無効
 	PORT1.PDR.BIT.B6 = 0; // Input
 	PORT1.PCR.BIT.B7 = 0; //入力プルアップ無効
 	PORT1.PDR.BIT.B7 = 0; // Input
 
-	// // I2Cピンのモードを初期化
-	// PORT1.PMR.BIT.B6 = 0; // SCL 汎用ポート
-	// PORT1.PMR.BIT.B7 = 0; // SDA 汎用ポート
-	// MPC.PWPR.BIT.B0WI = 0;
-	// MPC.PWPR.BIT.PFSWE = 1;
-	// MPC.P16PFS.BIT.PSEL = 0; //汎用ポート
-	// MPC.P17PFS.BIT.PSEL = 0; //汎用ポート
-	// MPC.PWPR.BIT.PFSWE = 0x80;
-
+	// I2Cピンのモードを初期化
+	PORT1.PMR.BIT.B6 = 0; // SCL 汎用ポート
+	PORT1.PMR.BIT.B7 = 0; // SDA 汎用ポート
+	PmnPFS_allow();
+	MPC.P16PFS.BIT.PSEL = 0; //汎用ポート
+	MPC.P17PFS.BIT.PSEL = 0; //汎用ポート
+	PmnPFS_prohibit();
 	
 	// I2C用のピンとして設定
 	PmnPFS_allow();
@@ -158,6 +157,8 @@ void I2C_init(void)
 	IR(RIIC2, TXI2) = 0;
 	IR(RIIC2, TEI2) = 0;
 	
+	RIIC2.ICCR1.BIT.IICRST = 0;	//i2cリセット状態を解除 ☆ここに入れないと誤動作する。理由は不明
+
 	RIIC2.ICSER.BYTE = 0x00;	// スレーブアドレス一致検出機能を無効化(SARL,SARU)
 
 	//周波数と転送速度の設定 転送速度:400kbps
@@ -174,8 +175,6 @@ void I2C_init(void)
 	//i2cの実行設定
 	RIIC2.ICIER.BYTE = 0x00; 	//全割込みを禁止
 	//	RIIC2.ICIER.BYTE =0xfc;//送信データエンプティ、送信終了割り込み 受信データフル割り込み、NACK受信割り込み、ストップコンディション検出割り込み、スタートコンディション検出割り込み
-	RIIC2.ICCR1.BIT.IICRST = 0;	//i2cリセット状態を解除
-	RIIC2.ICCR1.BIT.ICE = 0; // ICE 内部I2C転送動作禁止
 }
 
 void I2C_START(void)

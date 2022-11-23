@@ -20,19 +20,19 @@ void enc_test(void){
 		data = Get_enc_data();			//エンコーダ値取得
 
 		SCI_printf("R_Encdata_10bit,%d\n\r", ((int)(data & 0xFFFF)) & 0x2FFF );	//エンコーダ値表示
-		while(SCI_send_check());
+		sci_wait_send_check();
 
 		RSPI0.SPCMD0.BIT.SSLA = 	0x02;		//SSL信号アサート設定(SSL0を使う)
 		preprocess_spi_enc(0x1300);			//Read Angle
 		data = Get_enc_data();			//エンコーダ値取得
 
 		SCI_printf("L_Encdata_10bit,%d\n\r",((int)(data & 0xFFFF)) & 0x2FFF );	//エンコーダ値表示
-		while(SCI_send_check());
+		sci_wait_send_check();
 
 		wait_ms(100);
 		//画面クリアシーケンス
 		SCI_clear();
-		while(SCI_send_check());
+		sci_wait_send_check();
 
 	}
 }
@@ -52,17 +52,17 @@ void gyro_test(void){
     
     while(1){
         SCI_printf("data_H,%d\n\r",(data & 0x00FF00) >> 8);
-		while(SCI_send_check());
+		sci_wait_send_check();
         SCI_printf("data_L,%d\n\r\n\r",(data & 0x0000FF));
-		while(SCI_send_check());
+		sci_wait_send_check();
         SCI_printf("Ang_Velocity[deg/s],%d\n\r",((int)((2000.0*((float)data))/32767.0)));
-		while(SCI_send_check());
+		sci_wait_send_check();
 
         wait_ms(100);
 
         //画面クリアシーケンス
         SCI_clear();
-		while(SCI_send_check());
+		sci_wait_send_check();
 		preprocess_spi_gyro_2byte(0xB70000);
         data = (short)(read_gyro_data()&0x0000FFFF);
 		wait_ms(100);
@@ -74,11 +74,10 @@ void adc_test(void){
 	wall_sensor sensor_val;
 	volatile int volt;
 
-	clk_init();
-	init_adc();
-	infrared_sensor_init();
+	init_clk();
+	init_wallsensor();
 	init_sci(115200);
-	CMT_init();
+	init_CMT();
 	for(i=0;i<100*100*100;i++);
 
 	for(i=1;i<=100;i++)
@@ -86,17 +85,17 @@ void adc_test(void){
 		sensor_val = infrared_sensor_adc();
 		volt = voltage_adc();
 		SCI_printf("NUMBER [%d]\n",i);
-		while(SCI_send_check());
+		sci_wait_send_check();
 		SCI_printf("DATA_SENSOR_FR : %d\n",sensor_val.sen_fr);
-		while(SCI_send_check());
+		sci_wait_send_check();
 		SCI_printf("DATA_SENSOR_R : %d\n",sensor_val.sen_r);
-		while(SCI_send_check());
+		sci_wait_send_check();
 		SCI_printf("DATA_SENSOR_FL : %d\n",sensor_val.sen_fl);
-		while(SCI_send_check());
+		sci_wait_send_check();
 		SCI_printf("DATA_SENSOR_L : %d\n",sensor_val.sen_l);
-		while(SCI_send_check());
+		sci_wait_send_check();
 		SCI_printf("VOLTAGE : %f V\n",2.0*3.3*(float)(volt/4095.0));
-		while(SCI_send_check());
+		sci_wait_send_check();
 		wait_ms(100);
 	}
 	wait_ms(300);
@@ -109,9 +108,9 @@ void SCI_test(void){
 	volatile long n;
 	volatile int i;
 
-	clk_init();
+	init_clk();
 	init_sci(115200);
-	CMT_init();
+	init_CMT();
 	for(n=0;n<100*100*100;n++);
 	wait_ms(300);
 	for (i = 0; i < 100; i++)
@@ -125,16 +124,19 @@ void SCI_test(void){
 	SCI_clear();
 }
 
-void IOex_switch_test(void){
-	volatile int i;
-	clk_init();		//各種基本機能を先に初期化する
-	I2C_init();
+void IOex_test(void){
+	int i;
+	unsigned char sw;
+	init_clk();		//各種基本機能を先に初期化する
 	init_sci(115200);
-	IOex_init();
-	CMT_init();
+	init_I2C();
+	init_IOex();
+	init_CMT();
+	
+	for(i=0;i<100*100*100;i++);
 
 	SCI_printf("START LEDTEST\n");
-	for(i=0;i<5;i++){
+	for(i=0;i<2;i++){
 		LED(0x00);
 		wait_ms(500);
 		LED(0x01);
@@ -148,20 +150,63 @@ void IOex_switch_test(void){
 		LED(0x0F);
 		wait_ms(500);
 		SCI_printf("ROTATE %d\n",i);
-		while(SCI_send_check());
 	}
+	sci_wait_send_check();
 	SCI_printf("FINISH LEDTEST\n");
+	sci_wait_send_check();
+	SCI_printf("\nSTART SWTEST\n");
+	sci_wait_send_check();
+	SCI_printf("push switch2\n");
+	while (1)
+	{
+		sw = IOex_SWITCH();
+		if (SWITCH_2(sw) == 1)
+		{
+			sci_wait_send_check();
+			SCI_printf("SUCCESSED_sw3\n");
+			break;
+		}
+		wait_ms(100);
+	}
+	sci_wait_send_check();
+	SCI_printf("push switch3\n");
+	while (1)
+	{
+		sw = IOex_SWITCH();
+		if (SWITCH_3(sw) == 1)
+		{
+			sci_wait_send_check();
+			SCI_printf("SUCCESSED_sw3\n");
+			break;
+		}
+		wait_ms(100);
+	}
+	sci_wait_send_check();
+	SCI_printf("push switch4\n");
+	while (1)
+	{
+		sw = IOex_SWITCH();
+		if (SWITCH_4(sw) == 1)
+		{
+			sci_wait_send_check();
+			SCI_printf("SUCCESSED_sw4\n");
+			break;
+		}
+		wait_ms(100);
+	}
+	sci_wait_send_check();
+	SCI_printf("FINISH SWTEST\n");
 }
 
 void buzzer_test(void){
 	volatile int i,j;
-	clk_init();
+	init_clk();
 	init_sci(115200);
-	buzzer_init();
-	CMT_init();
+	init_buzzer();
+	init_CMT();
 	
 	SCI_printf("VOLUME TEST\n");
-	BEEP(10,1000,10);
+	BEEP(0,1000,10);
 	wait_ms(500);
 	BEEP(50,1000,10);
 	wait_ms(500);

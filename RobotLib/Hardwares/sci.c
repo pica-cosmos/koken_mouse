@@ -106,7 +106,7 @@ void SCI_clear(void){
 
 	//画面クリアシーケンス
 	SCI_printf("\x1b[2J");
-	while(SCI_send_check());
+	sci_wait_send_check();
 	SCI_printf("\x1b[0;0H");
 }
 
@@ -198,4 +198,8 @@ int SCI_send_check(void){
 	}else{
 		return 0;	//データ送信完了
 	}
+}
+
+void sci_wait_send_check(void){
+	while(SCI_send_check());
 }

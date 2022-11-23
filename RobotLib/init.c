@@ -19,15 +19,14 @@ void init_all(void){
 	volatile long i;
 	clrpsw_i();	//割込みを禁止	
 
-	clk_init();		//各種基本機能を先に初期化する
-	I2C_init();
-	init_adc();
+	init_clk();		//各種基本機能を先に初期化する
+	init_I2C();
 	init_sci(115200);
 
-	motor_init();
-	infrared_sensor_init();
-	buzzer_init();
-	IOex_init();
+	init_motor();
+	init_wallsensor();
+	init_buzzer();
+	init_IOex();
 	init_spi_enc();
 	init_spi_gyro();
 	init_maze();
@@ -52,13 +51,13 @@ void init_all(void){
 	//変数初期化
 	timer = 0;
 
-	CMT_init();
+	init_CMT();
 	setpsw_i();		//割込み許可
 	timer_start();
 }
 
 //クロック設定
-void clk_init(void){
+void init_clk(void){
 
     SYSTEM.PRCR.WORD = 0xa50b; //クロックソース選択の保護の解除
 
@@ -90,7 +89,7 @@ void clk_init(void){
     SYSTEM.SCKCR3.WORD = 0x0400; // PLL回路選択
 }
 
-void CMT_init(void){
+void init_CMT(void){
 
     //CMTのプロテクトを解除
     system_protect_allow();
@@ -144,7 +143,7 @@ void CMT_init(void){
     IR(CMT3, CMI3) = 0;			//割り込みステータフラグをクリア
 }
 
-void buzzer_init(void){
+void init_buzzer(void){
 
     PORTB.PODR.BIT.B5 = 0;
     PORTB.PDR.BIT.B5 = 1;       // output
@@ -169,7 +168,7 @@ void buzzer_init(void){
 }
 
 //モータ系レジスタの設定
-void motor_init(void){
+void init_motor(void){
 
 	MOTOR_EN_OUT = 0;	//予めmotor をSLEEPにする。モーターがハイインピーダンスで誤動作するのを防ぐ
 
@@ -228,8 +227,9 @@ void motor_init(void){
 	IR(MTU0,TGIC0) = 0;
 }
 
-void init_adc(void){
+void init_wallsensor(void){
 
+	//ADCの設定
 	system_protect_allow();		//A/Dコンバータに電力を供給
 	MSTP(S12AD) = 0;
 	system_protect_prohibit();
@@ -237,10 +237,6 @@ void init_adc(void){
 	S12AD.ADCSR.BIT.CKS = 3;	//A/D変換のクロックをPCLKの1分周(48M[Hz])に設定
 	S12AD.ADCSR.BIT.ADCS = 0;	//シングルスキャンモードに設定
 	
-}
-
-void infrared_sensor_init(void){
-
     //赤外LEDのピン設定
 	PORTA.PDR.BIT.B3 = 1;	//PA3を出力用に設定
 	PORT1.PDR.BIT.B5 = 1;	//P15を出力用に設定

@@ -5,7 +5,7 @@ void enc_test(void);
 void gyro_test(void);
 void adc_test(void);
 void SCI_test(void);
-void IOex_switch_test(void);
+void IOex_test(void);
 void buzzer_test(void);
 
 #endif

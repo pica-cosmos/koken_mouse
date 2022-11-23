@@ -331,7 +331,7 @@ int main(void)
 #endif
 
 #ifdef TEST
-	buzzer_test();
+	IOex_test();
 #endif
 
 	return 0;

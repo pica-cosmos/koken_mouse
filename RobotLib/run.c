@@ -17,7 +17,6 @@
 #include "glob_var.h"
 
 extern wait_ms(int miribyou);
-static float start_degree = 0;		//turn関数の中でしか使わない、しかしエラーが出るので、グローバル変数として宣言する
 
 void straight(float len, float acc, float max_sp, float end_sp){
 	//積分要素の初期化
@@ -80,6 +79,8 @@ void straight(float len, float acc, float max_sp, float end_sp){
 }
 
 void turn(int deg, float ang_accel, float max_ang_velocity, short dir){
+	float start_degree = 0;
+	
 	wait_ms(WAIT_TIME);
 	//積分要素の初期化
 	I_tar_ang_vel = 0;

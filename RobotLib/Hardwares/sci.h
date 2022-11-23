@@ -1,6 +1,16 @@
 #ifndef SCI_H_
 #define SCI_H_
 
+/*-----------------------------
+[Tera Term の設定]
+speed:115200bps(任意)       ☆サンプルプログラムでは38400
+改行コード R:auto, M:LF
+漢字-受信/送信 : SJIS
+ロケール : Japanese
+[接続設定]
+mode:シリアル / port:COM14
+------------------------------*/
+
 #define BUFF_SIZE 512
 
 #define ESC_KEY     0x1b 
@@ -24,5 +34,5 @@ int int_scr1_eri(void);
 
 //SCIが送信中であれば１,送信中で無ければ０を返す
 int SCI_send_check(void);
-
+void sci_wait_send_check(void);
 #endif
