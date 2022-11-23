@@ -1,0 +1,20 @@
+＜割り込みの優先順位について＞
+IEN(vector)で、割込みの優先順位が指定できる
+0:forbid 1:least 15:most
+
+;UART(SCI) : 1(least)
+;CMT0(motor駆動) : 15 / 壁センサ用タイマー割込み
+;CMT1(AD変換) : 14 / AD変換処理用割り込み
+;CMT2(SPI) : 13 / SPI用割込み
+;CMT3 : 2 / 遅延ルーチン用タイマー割込み
+;IIC : 0(10) / *割込みを禁止*
+;SPI(gyro) : 11 / ジャイロセンサ
+;SPI(enc) : 11 / エンコーダー
+;motor : 12 / モータ駆動用
+
+＜IOレジスタについて＞ p.692~:レジスタの説明
+PDR:port direction register, 0:input 1:output
+PODR:port output direction register, 0:low 1:high
+PIDR:port input direction register, 0:low 1:high
+PMR:port mode register, 0:汎用入出力ポートとして使用 1:周辺機能として使用
+PCR:プルアップ制御レジスタ 0:プルアップ無効(出力ピンとして設定すると自動的に0になる)

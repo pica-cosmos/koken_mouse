@@ -1,0 +1,9 @@
+fast.obj: RobotLib\fast.c
+fast.obj: RobotLib\../iodefine.h
+fast.obj: RobotLib\Parameters/adjust_parameters.h
+fast.obj: RobotLib\Parameters/static_parameters.h
+fast.obj: RobotLib\Definations/original_typedef.h
+fast.obj: RobotLib\Definations/system_definations.h
+fast.obj: RobotLib\search_algo.h
+fast.obj: RobotLib\glob_var.h
+fast.obj: RobotLib\run.h

@@ -1,0 +1,2 @@
+vecttbl.obj: vecttbl.c
+vecttbl.obj: vect.h

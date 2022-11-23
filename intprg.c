@@ -36,6 +36,11 @@
 *********************************************************************/
 #include <machine.h>
 #include "vect.h"
+#include "RobotLib/Hardwares/sci.h"
+#include "RobotLib/Hardwares/spi.h"
+#include "RobotLib/interrupt.h"
+
+extern int cmt3_compa_times;            //遅延ルーチン用、CMT1割込み検出フラグ
 
 #pragma section IntPRG
 
@@ -73,16 +78,24 @@ void Excep_FCU_FRDYI(void){ }
 void Excep_ICU_SWINT(void){ }
 
 // CMT0 CMI0
-void Excep_CMT0_CMI0(void){ }
+void Excep_CMT0_CMI0(void){
+    int_cmt0();
+}
 
 // CMT1 CMI1
-void Excep_CMT1_CMI1(void){ }
+void Excep_CMT1_CMI1(void){
+    int_cmt1();
+}
 
 // CMT2 CMI2
-void Excep_CMT2_CMI2(void){ }
+void Excep_CMT2_CMI2(void){ 
+    int_cmt2();
+}
 
 // CMT3 CMI3
-void Excep_CMT3_CMI3(void){ }
+void Excep_CMT3_CMI3(void){ 
+    cmt3_compa_times++;
+}
 
 // ETHER EINT
 void Excep_ETHER_EINT(void){ }
@@ -106,22 +119,34 @@ void Excep_USB1_D1FIFO1(void){ }
 void Excep_USB1_USBI1(void){ }
 
 // RSPI0 SPRI0
-void Excep_RSPI0_SPRI0(void){ }
+void Excep_RSPI0_SPRI0(void){
+    read_spdr_enc();
+}
 
 // RSPI0 SPTI0
-void Excep_RSPI0_SPTI0(void){ }
+void Excep_RSPI0_SPTI0(void){
+    write_spdr_enc();
+}
 
 // RSPI0 SPII0
-void Excep_RSPI0_SPII0(void){ }
+void Excep_RSPI0_SPII0(void){
+    spii_int_enc();
+}
 
 // RSPI1 SPRI1
-void Excep_RSPI1_SPRI1(void){ }
+void Excep_RSPI1_SPRI1(void){
+    read_spdr_gyro();
+}
 
 // RSPI1 SPTI1
-void Excep_RSPI1_SPTI1(void){ }
+void Excep_RSPI1_SPTI1(void){
+    write_spdr_gyro();
+}
 
 // RSPI1 SPII1
-void Excep_RSPI1_SPII1(void){ }
+void Excep_RSPI1_SPII1(void){
+    spii_int_gyro();
+}
 
 // RSPI2 SPRI2
 void Excep_RSPI2_SPRI2(void){ }
@@ -578,13 +603,19 @@ void Excep_SCI0_TXI0(void){ }
 void Excep_SCI0_TEI0(void){ }
 
 // SCI1 RXI1
-void Excep_SCI1_RXI1(void){ }
+void Excep_SCI1_RXI1(void){
+    int_scr1_rxi();
+}
 
 // SCI1 TXI1
-void Excep_SCI1_TXI1(void){ }
+void Excep_SCI1_TXI1(void){
+    int_sci1_txi();
+}
 
 // SCI1 TEI1
-void Excep_SCI1_TEI1(void){ }
+void Excep_SCI1_TEI1(void){ 
+    int_sci_tei();
+}
 
 // SCI2 RXI2
 void Excep_SCI2_RXI2(void){ }

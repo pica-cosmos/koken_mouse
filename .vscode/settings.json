@@ -1,0 +1,7 @@
+{
+    "files.encoding": "shiftjis",
+    "files.associations": {
+        "sci.h": "c",
+        "*.tcc": "c"
+    },
+}

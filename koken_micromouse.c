@@ -9,32 +9,332 @@
 /*                                                                     */
 /***********************************************************************/
 //#include "typedefine.h"
+
+//Š„‚İ‚É‚Â‚¢‚Ä
+//IR : Š„‚İƒXƒe[ƒ^ƒXƒtƒ‰ƒOAŠ„‚İ‚ª‹N‚±‚é‚ÆƒZƒbƒgAI‚í‚é‚ÆƒNƒŠƒA‚³‚ê‚é
+//IEN : IRƒŒƒWƒXƒ^‚ÌƒXƒe[ƒ^ƒX‚ğŠ„‚İæ(CPU‚É“`‚¦‚é‹@”\)B‹–‰Â‚·‚éê‡‚É‚ÍƒZƒbƒg
+//IPR : Š„‚İ—Dæ‡ˆÊ‚ğİ’è(15~1) 15:max , 1:min , 0:Š„‚İ‹Ö~
+//IEN¨IPR¨IR
+
+#include <machine.h>
 #include "iodefine.h"
-#include "mathf.h"
-#include "RobotLib/motor.h"
+#include "RobotLib/Definations/system_definations.h"
+#include "RobotLib/Parameters/static_parameters.h"
+#include "RobotLib/Parameters/adjust_parameters.h"
+#include "RobotLib/Hardwares/motor.h"
+#include "RobotLib/Hardwares/adc.h"
+#include "RobotLib/Hardwares/sci.h"
+#include "RobotLib/Hardwares/spi.h"
+#include "RobotLib/Hardwares/i2c.h"
+#include "RobotLib/init.h"
+#include "RobotLib/glob_var.h"
+#include "RobotLib/interface.h"
+#include "RobotLib/search_algo.h"
+#include "RobotLib/interrupt.h"
+#include "RobotLib/run.h"
+#include "RobotLib/fast.h"
+#include "RobotLib/test.c"
+
+extern void wait_ms(int miribyou);
+
+// #define TYOUSEI
+// #define SISOU
+#define TEST
+#pragma inline(print_str)
 
 #ifdef __cplusplus
 //#include <ios>                        // Remove the comment when you use ios
 //_SINT ios_base::Init::init_cnt;       // Remove the comment when you use ios
 #endif
 
-void main(void);
 #ifdef __cplusplus
 extern "C" {
 void abort(void);
 }
 #endif
 
-void main(void)
+
+int main(void)
 {
+	volatile long i,n;
+	volatile long data = 0;
+	volatile int sci_tend_flag = 0;
+	char mode = 1;
+	// wall_sensor sensor_val;
+
+	// init_all();
+	// for ( i = 0; i < 100*100*100; i++);
+#ifdef TYOUSEI
+	BEEP(50,440,1);
+	gyro_get_ref();
+	BEEP(50,440,1);
+	len_mouse = 0;
+	straight(SECTION,SEARCH_ACCEL,SEARCH_SPEED,0);
+	MOTOR_EN_OUT = 0;
+	BEEP(50,440,1);
+#endif
+
+#ifdef SISOU
+	while(1){
+		I_tar_ang_vel = 0;
+		I_ang_vel = 0;
+		I_tar_speed = 0;
+		I_speed = 0;
+
+		switch(mode){
+			
+			case 1:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	O	X	X	X	*
+				*					*
+				*****************************************/
+				
+				//‘«—§–@A’Tõ
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,3);
+					degree = 0;
+					timer = 0;
+					gyro_get_ref();
+					BEEP(50,440,1);
+					mypos.x = mypos.y = 0;			//À•W‚ğ‰Šú‰»
+					mypos.dir = north;			//•ûŠp‚ğ‰Šú‰»
+					search_adachi(GOAL_X,GOAL_Y);		//ƒS[ƒ‹‚Ü‚Å‘«—§–@
+					turn(180,TURN_ACCEL,TURN_SPEED,RIGHT);			//ƒS[ƒ‹‚µ‚½‚ç180“x‰ñ“]‚·‚é
+					mypos.dir = (mypos.dir+6) % 4;		//•ûŠp‚ğXV
+					BEEP(50,440,5);	//ƒS[ƒ‹‚µ‚½‚±‚Æ‚ğƒAƒs[ƒ‹
+					search_adachi(0,0);			//ƒXƒ^[ƒg’n“_‚Ü‚Å‘«—§–@‚Å‹A‚Á‚Ä‚­‚é
+					turn(180,TURN_ACCEL,TURN_SPEED,RIGHT);			//‹A‚Á‚Ä‚«‚½‚ç180“x‰ñ“]	
+					MOTOR_EN_OUT = 0;
+					BEEP(50,440,1);
+				}
+				
+				break;
+				
+			case 2:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	X	O	X	X	*
+				*					*
+				*****************************************/	
+			
+				//Å’Z‘–s
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,3);
+					degree = 0;
+					timer = 0;
+					gyro_get_ref();
+					BEEP(50,440,1);
+					mypos.x = mypos.y = 0;			//À•W‚ğ‰Šú‰»
+					mypos.dir = north;			//•ûŠp‚ğ‰Šú‰»
+					fast_run(GOAL_X,GOAL_Y);		//ƒS[ƒ‹‚Ü‚Å‘«—§–@
+					turn(180,TURN_ACCEL,TURN_SPEED,RIGHT);			//ƒS[ƒ‹‚µ‚½‚ç180“x‰ñ“]‚·‚é
+					mypos.dir = (mypos.dir+6) % 4;		//•ûŠp‚ğXV
+					BEEP(50,440,5);	//ƒS[ƒ‹‚µ‚½‚±‚Æ‚ğƒAƒs[ƒ‹
+					search_adachi(0,0);			//ƒXƒ^[ƒg’n“_‚Ü‚Å‘«—§–@‚Å‹A‚Á‚Ä‚­‚é
+					turn(180,TURN_ACCEL,TURN_SPEED,RIGHT);			//‹A‚Á‚Ä‚«‚½‚ç180“x‰ñ“]	
+					MOTOR_EN_OUT = 0;
+					BEEP(50,440,1);
+				}
+				
+				break;
+				
+			case 3:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	O	O	X	X	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 4:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	X	X	O	X	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 5:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	O	X	O	X	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 6:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	X	O	O	X	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 7:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	O	O	O	X	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 8:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	X	X	X	O	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 9:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	O	X	X	O	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 10:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	X	O	X	O	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 11:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	O	O	X	O	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 12:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	X	X	O	O	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 13:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	O	X	O	O	*
+				*					*
+				*****************************************/
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+			case 14:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	X	O	O	O	*
+				*					*
+				*****************************************/
+
+				//mode 3~14‚Í‹ó‚«
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,440,1);
+				}
+				break;
+				
+			case 15:
+				/****************************************
+				*MODE LED STATE				*
+				*					*
+				*	D3	D4	D5	D6	*
+				*	O	O	O	O	*
+				*					*
+				*****************************************/
+			
+				//’²®ƒ‚[ƒh‚ÉˆÚs
+				if(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4){
+					BEEP(50,1000,2);
+					while(sen_fr.value + sen_fl.value + sen_r.value + sen_l.value > SEN_DECISION * 4);
+					adjust_mode_select();
+				}				
+				break;
+				
+			//mode0~15ˆÈŠO‚Ìê‡B‰½‚à‚µ‚È‚¢B
+			default:
+				break;
+			
+		}
+		MOTOR_EN_OUT = 0;
+		//ƒ‚[ƒhØ‚è‘Ö‚¦—pˆ—
+		mode_change(&mode,1,15);
 	
-	clk_init();
-	motor_init();
-	
-	motor_off();
-	motor_on(1,1,24,24);
-	//å‰²ã‚Šè¾¼ã¿ä¸­ â€»å‰²ã‚Šè¾¼ã¿ãƒ«ãƒ¼ãƒãƒ³ã¯ãªã—
-	while(1);	
+	}
+#endif
+
+#ifdef TEST
+	buzzer_test();
+#endif
+
+	return 0;
 
 }
 
@@ -44,39 +344,3 @@ void abort(void)
 
 }
 #endif
-
-
-
-//ã‚¯ãƒ­ãƒƒã‚¯è¨­å®š
-void clk_init(void){
-
-	SYSTEM.PRCR.WORD = 0xa50b;		//ã‚¯ãƒ­ãƒƒã‚¯ã‚½ãƒ¼ã‚¹é¸æŠã®ä¿è­·ã®è§£é™¤
-
-	SYSTEM.PLLCR.WORD = 0x0F00;		/* PLL é€“å€Ã—16 å…¥åŠ›1åˆ†å‘¨ (12.000MHz * 16 = 192MHz)*/
-    // SYSTEM.PLLWTCR.BYTE = 0x0F;	    // 4194304cycle(Default) PLLãŒå®‰å®šã—ãŸå‘¨æ³¢æ•°ã«ãªã‚‹ã¾ã§wait â€»å†…éƒ¨ã§åˆ¶å¾¡ã•ã‚Œã‚‹ã®ã§å¿…è¦ãªã„
-	SYSTEM.PLLCR2.BYTE= 0x00;		// PLLEN : enable / PLL enable
-	
-	// ICK   : 192/2 = 96MHz 		// ã‚·ã‚¹ãƒ†ãƒ ã‚¯ãƒ­ãƒƒã‚¯ CPU DMAC DTC ROM RAM
-	// PCLKA : 192/2 = 96MHz 		// å‘¨è¾ºãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚¯ãƒ­ãƒƒã‚¯A ETHERCã€EDMACã€DEU
-	// PCLKB : 192/4 = 48MHz 		// å‘¨è¾ºãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚¯ãƒ­ãƒƒã‚¯B ä¸Šè¨˜ä»¥å¤– PCLKB=PCLK
-
-	
-	// SYSTEM.SCKCR.BIT.FCK=0x02;		//FCLK MAX 50MHz  192/4
-	// SYSTEM.SCKCR.BIT.ICK=0x01;		//ICLK MAX 100MHz 192/2
-	// SYSTEM.SCKCR.BIT.PSTOP1=0x01;		//BCLK å‡ºåŠ›åœæ­¢
-	// SYSTEM.SCKCR.BIT.PSTOP0=0x01;		//SDCLK å‡ºåŠ›åœæ­¢
-	// SYSTEM.SCKCR.BIT.BCK=0x02;		//BCLK MAX 100MHz ICLKä»¥ä¸‹ã«ã™ã‚‹å¿…è¦ãŒã‚ã‚‹192/4
-	// SYSTEM.SCKCR.BIT.PCKA=0x01;		//PCLKA MAX 100MHz 192/2
-	// SYSTEM.SCKCR.BIT.PCKB=0x02;		//PCLKB MAX 50MHz 192/4
-	// ä¸Šè¨˜ã®è¨­å®šã§ã¯æ­£ã—ãclockè¨­å®šãŒã§ããªã„ãŸã‚ä¸‹è¨˜ã®ã‚ˆã†ã«ä¸€æ‹¬ã§è¨­å®šã™ã‚‹ã“ã¨
-
-	SYSTEM.SCKCR.LONG = 0x21C21211;		//FCK1/4 ICK1/2 BCLKåœæ­¢ SDCLKåœæ­¢ BCK1/4 PCLKA1/2 PCLKB1/4
-	
-	// SYSTEM.SCKCR2.BIT.UCK=0x03;		//UCLK MAX 48MHz 192/4
-	// SYSTEM.SCKCR2.BIT.IEBCK=0x02;		//IECLK MAX 50MHz 192/4
-
-	SYSTEM.SCKCR2.WORD = 0x0032;		/* UCLK1/4 IEBCK1/4 */
-	SYSTEM.BCKCR.BYTE = 0x01;		/* BCLK = 1/2 */
-	
-	SYSTEM.SCKCR3.WORD = 0x0400;		//PLLå›è·¯é¸æŠ
-}

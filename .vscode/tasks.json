@@ -16,5 +16,13 @@
                 "isDefault": true
             }
         },
+        {
+            "label": "Flash", // マイコンへの書き込み
+            "type": "shell",
+            "command": "C:\\Program Files (x86)\\Renesas Electronics\\Programming Tools\\Renesas Flash Programmer V3.09\\RFPV3.Console.exe",
+            "args": [   // 引数を指定
+                "D:\\23xuan\\program\\koken_micromouse\\Flash_Programmer\\koken_micromouse.rpj", // プロジェクトファイルが存在するディレクトリ
+            ],
+        }
     ]
 }

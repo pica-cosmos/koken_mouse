@@ -1,0 +1,11 @@
+sbrk.obj: sbrk.c
+sbrk.obj: C:\Program\ Files\ (x86)\Renesas\ Electronics\CS+\CC\CC-RX\V3.04.00\include\stddef.h
+sbrk.obj: RobotLib\Definations\macro.h
+sbrk.obj: RobotLib\Definations\system_definations.h
+sbrk.obj: RobotLib\Definations\../../iodefine.h
+sbrk.obj: C:\Program\ Files\ (x86)\Renesas\ Electronics\CS+\CC\CC-RX\V3.04.00\include\sys/yvals.h
+sbrk.obj: C:\Program\ Files\ (x86)\Renesas\ Electronics\CS+\CC\CC-RX\V3.04.00\include\stdarg.h
+sbrk.obj: C:\Program\ Files\ (x86)\Renesas\ Electronics\CS+\CC\CC-RX\V3.04.00\include\errno.h
+sbrk.obj: C:\Program\ Files\ (x86)\Renesas\ Electronics\CS+\CC\CC-RX\V3.04.00\include\stdio.h
+sbrk.obj: typedefine.h
+sbrk.obj: sbrk.h

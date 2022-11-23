@@ -1,0 +1,10 @@
+intprg.obj: intprg.c
+intprg.obj: C:\Program\ Files\ (x86)\Renesas\ Electronics\CS+\CC\CC-RX\V3.04.00\include\machine.h
+intprg.obj: RobotLib\Definations\macro.h
+intprg.obj: RobotLib\Definations\system_definations.h
+intprg.obj: RobotLib\Definations\../../iodefine.h
+intprg.obj: C:\Program\ Files\ (x86)\Renesas\ Electronics\CS+\CC\CC-RX\V3.04.00\include\builtin.h
+intprg.obj: vect.h
+intprg.obj: RobotLib/Hardwares/sci.h
+intprg.obj: RobotLib/Hardwares/spi.h
+intprg.obj: RobotLib/interrupt.h
