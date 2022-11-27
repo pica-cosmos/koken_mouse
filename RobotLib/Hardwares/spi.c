@@ -89,9 +89,9 @@ void init_spi_gyro(void)
 	RSPI1.SPCMD0.BIT.SCKDEN = 	0x01;	//RSPCKの遅延はSPCKDの設定値
 	
 	//割り込み優先レベル設定
-	ICU.IPR[42].BYTE = 11;
-	ICU.IPR[43].BYTE = 11;
-	ICU.IPR[44].BYTE = 11;
+	ICU.IPR[42].BYTE = 15;
+	ICU.IPR[43].BYTE = 15;
+	ICU.IPR[44].BYTE = 15;
 	
 	//割り込みの許可
 	ICU.IER[5].BIT.IEN2 = 1;	//SPRI1の割り込み許可
@@ -112,7 +112,7 @@ void init_spi_gyro(void)
 	MPC.P27PFS.BIT.PSEL=	0x0D;	//P27をRSPCKBとして利用
 	MPC.PE2PFS.BIT.PSEL=	0x0E;	//PE2をMOSIBとして利用
 	MPC.PE3PFS.BIT.PSEL=	0x0D;	//PE3をMISOBとして利用
-	MPC.PE4PFS.BIT.PSEL=	0x0D;	//PE4をSSLBBとして利用
+	MPC.PE4PFS.BIT.PSEL=	0x0D;	//PE4をSSLB0として利用
 	
 	MPC.PWPR.BYTE=0x80;	//プロテクト作動
 	
@@ -125,10 +125,45 @@ void init_spi_gyro(void)
 	RSPI1.SPCR.BIT.SPEIE =		0x00;	//RSPIエラー割り込み要求の発生を禁止
 	RSPI1.SPCR.BIT.SPTIE =		0x00;	//RSPI送信割り込み要求の発生を禁止
 	RSPI1.SPCR.BIT.SPRIE =		0x00;	//RSPI受信割り込み要求の発生を禁止
-	SCI_printf("init_spi\n\r");
+	// SCI_printf("init_spi\n\r");
 }
 
 
+
+void preprocess_spi_gyro(int address)
+{
+	/*****************************************************************************************
+	SPI転送前処理
+		ジャイロ用
+	*****************************************************************************************/
+	//SCI_printf("preprocess start\n\r");
+	
+	volatile long dummy = 0;
+	dummy = RSPI1.SPDR.LONG;
+	
+	RSPI1.SPCR.BIT.SPE = 0;		//RSPI機能が無効
+	RSPI1.SPCMD0.BIT.SPB =	 	0x1;	//RSPIデータ長を24ビットに設定
+	
+	//エラー要因のクリア
+	RSPI1.SPSR.BIT.MODF = 0;
+	RSPI1.SPSR.BIT.OVRF = 0;
+	RSPI1.SPSR.BIT.PERF = 0;
+	
+	//SPII割り込みを禁止
+	RSPI1.SPCR2.BIT.SPIIE = 0;
+	
+	gyro_write_cnt = 0;
+	//SPEビットの許可 同時に必要な割り込みを許可
+	///*
+	RSPI1.SPCR.BIT.SPTIE = 1;	//RSPI送信割り込み要求の発生を許可
+	RSPI1.SPCR.BIT.SPRIE = 1;	//RSPI受信割り込み要求の発生を許可
+	RSPI1.SPCR.BIT.SPEIE = 1;	//RSPIエラー割り込み要求の発生を許可
+	RSPI1.SPCR.BIT.SPE = 1;		//RSPI機能が有効
+	//*/
+	//RSPI1.SPCR.BYTE |= 0xF0;
+	gyro_address = address;
+	
+}
 
 void preprocess_spi_gyro_2byte(int address)
 {
@@ -224,10 +259,6 @@ long read_gyro_data(void)
 	return gyro_data;
 }
 
-
-
-
-
 /*****************************************************************************************
 SPI転送処理
 	エンコーダ用
@@ -293,11 +324,11 @@ void init_spi_enc(void)
 	ICU.IER[4].BIT.IEN7 = 0;	//SPRI0の割り込み禁止
 	ICU.IER[5].BIT.IEN0 = 0;	//SPTI0の割り込み禁止
 	ICU.IER[5].BIT.IEN1 = 0;	//SPII0の割り込み禁止
-	///*
+	
 	//割り込み優先レベル設定
-	ICU.IPR[39].BYTE = 11;	//SPRI0
-	//ICU.IPR[40].BYTE = 11;	//SPTI0
-	//ICU.IPR[41].BYTE = 11;	//SPII0
+	ICU.IPR[39].BYTE = 0x0F;	//SPRI0
+	//ICU.IPR[40].BYTE = 0x0F;	//SPTI0
+	//ICU.IPR[41].BYTE = 0x0F;	//SPII0
 	
 	//割り込みの許可
 	ICU.IER[4].BIT.IEN7 = 1;	//SPRI0の割り込み許可
@@ -347,6 +378,8 @@ void preprocess_spi_enc(int address)
 		エンコーダ用
 	*****************************************************************************************/
 	//SCI_printf("preprocess start\n\r");
+
+	long_enc_address = (address<< 8) & 0x00FFFF00;
 	enc_write_cnt = 0;
 	
 	//エラー要因のクリア
@@ -362,9 +395,6 @@ void preprocess_spi_enc(int address)
 	RSPI0.SPCR.BIT.SPRIE = 1;	//RSPI受信割り込み要求の発生を許可
 	RSPI0.SPCR.BIT.SPEIE = 1;	//RSPIエラー割り込み要求の発生を許可
 	RSPI0.SPCR.BIT.SPE = 1;		//RSPI機能が有効
-	
-	
-	
 }
 
 void write_spdr_enc(void)

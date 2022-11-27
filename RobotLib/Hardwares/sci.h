@@ -34,5 +34,4 @@ int int_scr1_eri(void);
 
 //SCI‚ª‘—M’†‚Å‚ ‚ê‚Î‚P,‘—M’†‚Å–³‚¯‚ê‚Î‚O‚ğ•Ô‚·
 int SCI_send_check(void);
-void sci_wait_send_check(void);
 #endif

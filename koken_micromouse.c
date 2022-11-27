@@ -331,7 +331,7 @@ int main(void)
 #endif
 
 #ifdef TEST
-	IOex_test();
+	gyro_test();
 #endif
 
 	return 0;

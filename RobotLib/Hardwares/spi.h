@@ -1,13 +1,14 @@
 #ifndef SPI_H_
 #define SPI_H_
 
-#define ENC_SS RSPI0.SPCMD0.BIT.SSLA 
-#define ENC_RIGHT_SS 0x00
-#define ENC_LEFT_SS 0x02
+#define ENC_SS          RSPI0.SPCMD0.BIT.SSLA 
+#define ENC_RIGHT_SS    0x00
+#define ENC_LEFT_SS     0x02
 
-#define GYRO_ADDRESS 0x062100
+#define GYRO_ADDRESS    0x062100
 
 void init_spi_gyro(void);
+void preprocess_spi_gyro(int address);
 void preprocess_spi_gyro_2byte(int address);
 void write_spdr_gyro(void);
 void spii_int_gyro(void);
@@ -17,7 +18,11 @@ int gyro_read_check(void);
 int gyro_write_check(void);
 long read_gyro_data(void);
 
-//For encoder
+/*-----------------------------------
+R-encoder : increase(forward) / decrease(back)
+L-encoder : decrease(forward) / increase(back)
+range : 0~1023
+-----------------------------------*/
 void init_spi_enc(void);
 void preprocess_spi_enc(int address);
 void spii_int_enc(void);

@@ -473,13 +473,13 @@ void int_cmt2(void)
 		値の取得 速度更新 距離積分など
 	*****************************************************************************************/	
 	if(state == 0){
-		RSPI0.SPCMD0.BIT.SSLA = 	0x00;	//SSL信号アサート設定(SSL0を使う)
-		preprocess_spi_enc(0xFFFF);	//Read Angle
+		ENC_SS = 	ENC_RIGHT_SS;	//SSL信号アサート設定(SSL0を使う)
+		preprocess_spi_enc(0x1400);	//Read Angle
 		enc_data_r = Get_enc_data();
 		state = 1;
 	}else{
-		RSPI0.SPCMD0.BIT.SSLA = 	0x02;	//SSL信号アサート設定(SSL2を使う)
-		preprocess_spi_enc(0xFFFF);	//Read Angle
+		ENC_SS = 	ENC_LEFT_SS;	//SSL信号アサート設定(SSL2を使う)
+		preprocess_spi_enc(0x1300);	//Read Angle
 		enc_data_l = Get_enc_data();
 		
 		//左右エンコーダから角度取得

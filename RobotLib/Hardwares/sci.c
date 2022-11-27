@@ -72,7 +72,7 @@ void init_sci(long baud){
 int SCI_printf(const char *format, ...){
 
 	va_list arg;
-
+	while(SCI_send_check());			//割込みの競合によるトラブル防止
 	if(SCI1.SSR.BIT.TEND == 0) return 0;
 
 	va_start(arg, format);
@@ -86,6 +86,7 @@ int SCI_printf(const char *format, ...){
 	SCI1.SCR.BIT.TIE = 1;	//TXI 割り込み要求を許可
 	
 	SCI1.TDR = sci1_buff[sci1_point++];
+	while(SCI_send_check());		//割込みの競合によるトラブル防止
 	return 1;
 }
 
@@ -106,7 +107,6 @@ void SCI_clear(void){
 
 	//画面クリアシーケンス
 	SCI_printf("\x1b[2J");
-	sci_wait_send_check();
 	SCI_printf("\x1b[0;0H");
 }
 
@@ -198,8 +198,4 @@ int SCI_send_check(void){
 	}else{
 		return 0;	//データ送信完了
 	}
-}
-
-void sci_wait_send_check(void){
-	while(SCI_send_check());
 }
