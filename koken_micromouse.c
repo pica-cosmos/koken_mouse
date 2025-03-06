@@ -331,7 +331,7 @@ int main(void)
 #endif
 
 #ifdef TEST
-	gyro_test();
+	interrupt_test_cmt1();
 #endif
 
 	return 0;

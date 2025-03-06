@@ -8,4 +8,5 @@ void SCI_test(void);
 void IOex_test(void);
 void buzzer_test(void);
 
+void interrupt_test_cmt1(void);
 #endif

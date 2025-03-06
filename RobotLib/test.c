@@ -60,6 +60,7 @@ void gyro_test(void){
 		SCI_printf("Ang_Velocity[deg/s],%d\n\r",((int)((2000.0*((float)data))/32767.0)));
 		
 		wait_ms(100);
+		wait_ms(100);
 		//画面クリアシーケンス
 		SCI_clear();
 		preprocess_spi_gyro(0xB70000);
@@ -204,4 +205,27 @@ void buzzer_test(void){
 	wait_ms(500);
 	BEEP(50,15000,10);
 	SCI_printf("FINISH TEST\n");
+}
+
+void interrupt_test_cmt1(void){
+	init_all();
+
+	while(1){
+		SCI_printf("\nsensor_R_value : %d\n",sen_r.value);
+		SCI_printf("sensor_FR_value : %d\n",sen_fr.value);
+		SCI_printf("sensor_L_value : %d\n",sen_l.value);
+		SCI_printf("sensor_FL_value : %d\n",sen_fl.value);
+		
+		SCI_printf("\nsensor_R_iswall : %d\n",sen_r.is_wall);
+		SCI_printf("sensor_FR_iswall : %d\n",sen_fr.is_wall);
+		SCI_printf("sensor_L_iswall : %d\n",sen_l.is_wall);
+		SCI_printf("sensor_FL_iswall : %d\n",sen_fl.is_wall);
+
+		SCI_printf("\nsensor_R_iscontrol : %d\n",sen_r.is_control);
+		SCI_printf("sensor_L_iscontrol : %d\n",sen_l.is_control);
+
+		SCI_printf("\nVATT : %d(V)\n",V_bat);
+		wait_ms(100);
+		SCI_clear();
+	}
 }
