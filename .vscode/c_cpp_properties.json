@@ -4,18 +4,14 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Program Files (x86)/Renesas Electronics/CS+/CC/CC-RX/V3.04.00/include"
+                "C:/Program Files (x86)/Renesas Electronics/CS+/CC/CC-RX/V3.07.00/include"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
                 "_VSCODE"
-            ],
-            "compilerPath": "C:\\MinGW\\bin\\gcc.exe",
-            "cStandard": "c17",
-            "cppStandard": "gnu++14",
-            "intelliSenseMode": "windows-gcc-x86"
+            ]
         }
     ],
     "version": 4

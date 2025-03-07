@@ -1,8 +1,7 @@
-Renesas Optimizing Linker (W3.04.00 )             27-Nov-2022 18:05:04
+Renesas Optimizing Linker (W3.07.00 )             07-Mar-2025 18:22:35
 
 *** Options ***
 
--MAKEUD=DefaultBuild\koken_micromouse.lk.ud
 -subcommand=DefaultBuild\koken_micromouse.clnk
 -library=DefaultBuild\koken_micromouse.lib
 -input=DefaultBuild\dbsct.obj
@@ -80,17 +79,17 @@ D_2
 D
                                   fff808cc  fff80b47       27c   4
 P
-                                  fff80b48  fff85f1a      53d3   1
+                                  fff80b48  fff85ec9      5382   1
 PIntPRG
-                                  fff85f1b  fff86158       23e   1
+                                  fff85eca  fff86107       23e   1
 W_1
-                                  fff86159  fff86159         0   1
+                                  fff86108  fff86108         0   1
 W_2
-                                  fff86159  fff86159         0   1
+                                  fff86108  fff86108         0   1
 W
-                                  fff86159  fff86159         0   1
+                                  fff86108  fff86108         0   1
 L
-                                  fff8615c  fff8658c       431   4
+                                  fff86108  fff86538       431   4
 $ADDR_C_FFFFFF80
                                   ffffff80  ffffff83         4   1
 $ADDR_C_FFFFFFA0
