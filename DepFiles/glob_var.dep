@@ -1,4 +1,0 @@
-glob_var.obj: RobotLib\glob_var.c
-glob_var.obj: RobotLib\glob_var.h
-glob_var.obj: RobotLib\Parameters/static_parameters.h
-glob_var.obj: RobotLib\Definations/original_typedef.h

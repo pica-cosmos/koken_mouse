@@ -1,3 +1,0 @@
-misc.obj: RobotLib\misc.c
-misc.obj: RobotLib\../iodefine.h
-misc.obj: RobotLib\Parameters/static_parameters.h

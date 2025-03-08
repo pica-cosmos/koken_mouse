@@ -1,2 +1,0 @@
-dbsct.obj: dbsct.c
-dbsct.obj: typedefine.h

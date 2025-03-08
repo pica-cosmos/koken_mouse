@@ -1,9 +1,0 @@
-search_algo.obj: RobotLib\search_algo.c
-search_algo.obj: RobotLib\search_algo.h
-search_algo.obj: RobotLib\Definations/original_typedef.h
-search_algo.obj: RobotLib\../iodefine.h
-search_algo.obj: RobotLib\Parameters/static_parameters.h
-search_algo.obj: RobotLib\Parameters/adjust_parameters.h
-search_algo.obj: RobotLib\Definations/macro.h
-search_algo.obj: RobotLib\Definations/system_definations.h
-search_algo.obj: RobotLib\glob_var.h
