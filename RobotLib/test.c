@@ -3,6 +3,7 @@
 #include "Hardwares/spi.h"
 #include "Hardwares/adc.h"
 #include "interface.h"
+#include "glob_var.h"
 
 extern void wait_ms(int miribyou);
 

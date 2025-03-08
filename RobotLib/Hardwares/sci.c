@@ -1,8 +1,8 @@
 /*™TXI,TEIŠ„‚İ‚É‚Â‚¢‚Ä‚à‚¤­‚µÚ‚µ‚­‘‚«‚½‚¢*/
-#include "sci.h"
 #include <machine.h>
-#include <stdarg.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include "sci.h"
 #include "../../iodefine.h"
 #include "../Definations/system_definations.h"
 
@@ -71,7 +71,7 @@ void init_sci(long baud){
 
 int SCI_printf(const char *format, ...){
 
-	va_list arg;
+	_Va_list arg;
 	while(SCI_send_check());			//Š„‚İ‚Ì‹£‡‚É‚æ‚éƒgƒ‰ƒuƒ‹–h~
 	if(SCI1.SSR.BIT.TEND == 0) return 0;
 
@@ -142,7 +142,7 @@ void int_scr1_rxi(void){
     
 	switch(SCI1.RDR){
         case ESC_KEY:
-
+			
             receve_data_num = 0;
 
             for( n=0; n<=sizeof(get_buff_m); n++ ){		//get_buff_m‚ğ‰Šú‰»

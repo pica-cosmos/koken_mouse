@@ -1,8 +1,8 @@
 #include "adc.h"
 #include <machine.h>
 #include "../../iodefine.h"
-#include "../Definations/system_definations.h"
 #include "../Definations/original_typedef.h"
+#include "../Definations/system_definations.h"
 
 wall_sensor infrared_sensor_adc(void){
 	
@@ -33,7 +33,7 @@ wall_sensor infrared_sensor_adc(void){
 	sensor_value.sen_r = DATA_SENSOR_R;
 	sensor_value.sen_fl = DATA_SENSOR_FL;
 	sensor_value.sen_l = DATA_SENSOR_L;
-
+	
 	return sensor_value;
 }
 

@@ -2,6 +2,11 @@
     "files.encoding": "shiftjis",
     "files.associations": {
         "sci.h": "c",
-        "*.tcc": "c"
+        "*.tcc": "c",
+        "original_typedef.h": "c",
+        "iodefine.h": "c",
+        "stdarg.h": "c"
     },
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.intelligenceEngine": "default",
 }

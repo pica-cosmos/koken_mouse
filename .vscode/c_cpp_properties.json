@@ -11,7 +11,8 @@
                 "UNICODE",
                 "_UNICODE",
                 "_VSCODE"
-            ]
+            ],
+            "compilerPath": "C:/Program Files (x86)/Renesas Electronics/CS+/CC/CubeSuite+.exe"
         }
     ],
     "version": 4
